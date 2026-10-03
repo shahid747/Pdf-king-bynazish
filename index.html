@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PDF Master Pro — By Mr Nazish Alfanso</title>
+  <meta name="description" content="Professional, Advanced, and Mobile-Friendly In-Browser PDF Editor by Mr Nazish Alfanso. Edit text directly in original layout, add text, images, annotations, sign, merge, split, and OCR.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ef4444'><path d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9.5 8.5h-2v2h2c.8 0 1.5-.7 1.5-1.5s-.7-1.5-1.5-1.5zm5 2h-2v2h2c.8 0 1.5-.7 1.5-1.5s-.7-1.5-1.5-1.5z'/></svg>">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Styles -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- PDF.js and PDF-Lib CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.9/pdf-lib.min.js"></script>
+</head>
+<body>
+
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <div class="brand-logo" title="PDF Master Pro">P</div>
+      <div class="brand-titles">
+        <div class="brand-name">
+          PDF Master Pro
+          <span class="brand-badge">Pro v2.5</span>
+        </div>
+        <div class="brand-author">By Mr Nazish Alfanso</div>
+      </div>
+    </div>
+
+    <!-- Center Document Info & Navigation -->
+    <div class="header-center">
+      <div class="doc-info-bar" id="docInfoBar" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <span class="doc-filename" id="docFilename">document.pdf</span>
+      </div>
+
+      <!-- Quick Page Navigation -->
+      <div class="tool-group" id="headerPageNav" style="display: none;">
+        <button class="btn btn-icon btn-ghost" id="btnPrevPage" title="Previous Page">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <span style="font-size: 0.8rem; font-weight: 600; padding: 0 4px;">
+          <input type="number" id="inputCurrentPage" value="1" min="1" max="1" style="width: 38px; text-align: center; border: 1px solid var(--border-color); border-radius: 4px; padding: 2px; font-weight: 600; background: var(--bg-tertiary); color: var(--text-primary);">
+          / <span id="spanTotalPages">1</span>
+        </span>
+        <button class="btn btn-icon btn-ghost" id="btnNextPage" title="Next Page">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      <!-- Zoom Controls -->
+      <div class="tool-group" id="headerZoomControls" style="display: none;">
+        <button class="btn btn-icon btn-ghost" id="btnZoomOut" title="Zoom Out (Ctrl -)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+        <span id="zoomLevelDisplay" style="font-size: 0.8rem; font-weight: 600; min-width: 44px; text-align: center;">100%</span>
+        <button class="btn btn-icon btn-ghost" id="btnZoomIn" title="Zoom In (Ctrl +)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+        <button class="btn btn-icon btn-ghost" id="btnFitPage" title="Fit to Page">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Header Right Action Buttons -->
+    <div class="header-actions">
+      <!-- Upload File Trigger -->
+      <input type="file" id="fileInput" accept="application/pdf" style="display: none;">
+      <button class="btn" id="btnUploadHeader" title="Upload New PDF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span class="btn-text">Open PDF</span>
+      </button>
+
+      <!-- Undo / Redo -->
+      <button class="btn btn-icon btn-ghost" id="btnUndo" disabled title="Undo (Ctrl+Z)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+      </button>
+      <button class="btn btn-icon btn-ghost" id="btnRedo" disabled title="Redo (Ctrl+Y)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      </button>
+
+      <!-- Compare Mode -->
+      <button class="btn btn-ghost" id="btnCompare" title="Compare Original vs Edited">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+        <span class="btn-text">Compare</span>
+      </button>
+
+      <!-- Search & Replace Toggle -->
+      <button class="btn btn-icon btn-ghost" id="btnToggleSearch" title="Search & Replace (Ctrl+F)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+
+      <!-- Dark / Light Theme Toggle -->
+      <button class="btn btn-icon btn-ghost" id="btnToggleTheme" title="Toggle Theme">
+        <svg id="themeIconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="themeIconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+
+      <!-- Print Button -->
+      <button class="btn btn-icon btn-ghost" id="btnPrint" title="Print PDF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      </button>
+
+      <!-- Primary Download CTA -->
+      <button class="btn btn-primary" id="btnDownloadPDF" title="Save & Download Edited PDF">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span class="btn-text">Download PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Toolbar -->
+  <section class="toolbar-section" id="mainToolbar">
+    <!-- Sidebar Toggle -->
+    <button class="tool-btn" id="btnToggleSidebar" title="Toggle Thumbnails Panel">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      <span>Pages</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Navigation & Selection Tools -->
+    <button class="tool-btn active" id="toolSelect" data-tool="select" title="Selection & Move Mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>
+      <span>Select</span>
+    </button>
+    <button class="tool-btn" id="toolPan" data-tool="pan" title="Hand / Pan Tool">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 11V6a2 2 0 0 0-4 0v5m-4-7v7m-4-4v7a6 6 0 0 0 12 0v-4"/></svg>
+      <span>Pan</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Direct Text Editing Tools -->
+    <button class="tool-btn" id="toolEditText" data-tool="editText" title="Direct Text Editor (Click existing text to edit)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Edit Text</span>
+    </button>
+    <button class="tool-btn" id="toolAddText" data-tool="addText" title="Add New Text Box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+      <span>Add Text</span>
+    </button>
+    <button class="tool-btn" id="toolDeleteText" data-tool="deleteText" title="Delete Selected Text or Block">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+      <span>Delete Text</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Text Formatting & Annotations -->
+    <button class="tool-btn" id="toolHighlight" data-tool="highlight" title="Highlight Text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l-6 6v3h3l6-6m-3-3l6-6a2 2 0 0 1 3 0l3 3a2 2 0 0 1 0 3l-6 6m-6-6l6 6"/></svg>
+      <span>Highlight</span>
+    </button>
+    <button class="tool-btn" id="toolUnderline" data-tool="underline" title="Underline Text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v7a6 6 0 0 0 12 0V3"/><line x1="4" y1="21" x2="20" y2="21"/></svg>
+      <span>Underline</span>
+    </button>
+    <button class="tool-btn" id="toolStrikethrough" data-tool="strikethrough" title="Strikethrough Text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4H9a3 3 0 0 0-2.83 4"/><path d="M14 12v.01"/><path d="M17.9 15.6A4 4 0 0 1 14 20H8"/><line x1="4" y1="12" x2="20" y2="12"/></svg>
+      <span>Strike</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Freehand Drawing & Signature -->
+    <button class="tool-btn" id="toolDraw" data-tool="draw" title="Draw / Freehand Pen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2l4 4-10 10H8v-4L18 2z"/><path d="M14 6l4 4"/></svg>
+      <span>Draw</span>
+    </button>
+    <button class="tool-btn" id="toolSignature" title="Digital Signature Stamp">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+      <span>Sign</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Shapes & Media -->
+    <button class="tool-btn" id="toolShapeRect" data-tool="shapeRect" title="Rectangle Shape">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+      <span>Rectangle</span>
+    </button>
+    <button class="tool-btn" id="toolShapeCircle" data-tool="shapeCircle" title="Circle Shape">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg>
+      <span>Circle</span>
+    </button>
+    <button class="tool-btn" id="toolShapeLine" data-tool="shapeLine" title="Line & Arrow">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="10 5 19 5 19 14"/></svg>
+      <span>Line/Arrow</span>
+    </button>
+    <button class="tool-btn" id="toolAddImage" title="Insert Image / Logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <span>Add Image</span>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Page Management Tools Dropdown / Quick triggers -->
+    <button class="tool-btn" id="toolRotatePage" title="Rotate Current Page 90° Clockwise">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+      <span>Rotate</span>
+    </button>
+    <button class="tool-btn" id="toolDeletePage" title="Delete Current Page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/></svg>
+      <span>Del Page</span>
+    </button>
+    <button class="tool-btn" id="toolMergePDF" title="Merge Multiple PDFs into One">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+      <span>Merge</span>
+    </button>
+    <button class="tool-btn" id="toolSplitPDF" title="Split or Extract Pages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+      <span>Split</span>
+    </button>
+    <button class="tool-btn" id="toolOCRScan" title="OCR Scanner (Extract text from Scanned Documents)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V4h3m10 0h3v3M4 17v3h3m10 0h3v-3"/><text x="8" y="16" font-size="8" font-weight="bold" fill="currentColor">OCR</text></svg>
+      <span>OCR</span>
+    </button>
+  </section>
+
+  <!-- App Workspace -->
+  <main class="app-workspace">
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar" id="leftSidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-tabs">
+          <div class="sidebar-tab active" data-tab="thumbnails">Thumbnails</div>
+          <div class="sidebar-tab" data-tab="pageTools">Page Tools</div>
+          <div class="sidebar-tab" data-tab="history">History</div>
+        </div>
+      </div>
+      <div class="sidebar-content" id="sidebarContent">
+        <!-- Thumbnails Container -->
+        <div id="tabContentThumbnails" style="display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">PDF लोड होने पर थंबनेल यहाँ दिखेंगे।</div>
+        </div>
+
+        <!-- Page Management Tools Panel -->
+        <div id="tabContentPageTools" style="display: none; flex-direction: column; gap: 0.75rem;">
+          <div style="font-size: 0.85rem; font-weight: 700;">Page Operations</div>
+          <button class="btn btn-ghost" id="sbBtnRotateCW" style="justify-content: flex-start;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            Rotate 90° Clockwise
+          </button>
+          <button class="btn btn-ghost" id="sbBtnRotateCCW" style="justify-content: flex-start;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2.5 2v6h6M2.66 15.57a10 10 0 1 0 .57-8.38L-2.44 1.52"/></svg>
+            Rotate 90° Counter-Clockwise
+          </button>
+          <button class="btn btn-ghost" id="sbBtnDeletePage" style="justify-content: flex-start; color: var(--danger);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+            Delete Current Page
+          </button>
+          <button class="btn btn-ghost" id="sbBtnExtractPage" style="justify-content: flex-start;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/></svg>
+            Extract Current Page
+          </button>
+          <div class="toolbar-divider" style="width: 100%; height: 1px; margin: 8px 0;"></div>
+          <button class="btn btn-ghost" id="sbBtnMerge" style="justify-content: flex-start;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/></svg>
+            Merge with Another PDF
+          </button>
+          <button class="btn btn-ghost" id="sbBtnSplit" style="justify-content: flex-start;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/></svg>
+            Split PDF Document
+          </button>
+        </div>
+
+        <!-- History Log Panel -->
+        <div id="tabContentHistory" style="display: none; flex-direction: column; gap: 0.5rem;">
+          <div style="font-size: 0.85rem; font-weight: 700;">Edit History</div>
+          <div id="historyListContainer" style="display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem;">
+            <div style="color: var(--text-muted); text-align: center;">No edits performed yet.</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Canvas Scrollable Viewport -->
+    <div class="canvas-viewport" id="canvasViewport">
+      <!-- Empty State / Upload Hero Banner -->
+      <div class="upload-hero" id="uploadHero">
+        <div class="upload-icon-container">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        </div>
+        <h1 class="upload-title">PDF Master Pro</h1>
+        <p class="upload-subtitle">मूल लेआउट को बिना बिगाड़े PDF टेक्स्ट सीधे एडिट करें, नया टेक्स्ट जोड़ें, इमेज और सिग्नेचर लगाएं।</p>
+        
+        <div class="upload-btn-group">
+          <button class="btn btn-primary" id="btnUploadHero" style="padding: 0.65rem 1.4rem; font-size: 0.95rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Choose PDF File
+          </button>
+          <button class="btn" id="btnLoadSampleDoc" style="padding: 0.65rem 1.2rem; font-size: 0.95rem;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Try Demo Sample PDF
+          </button>
+        </div>
+
+        <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+          Drag & Drop PDF anywhere on screen • 100% Client-Side Privacy • Zero Data Uploaded to Server
+        </div>
+
+        <div class="upload-features">
+          <div class="feature-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Direct Text Editing:</strong> Click any text to modify in exact original font & layout.</span>
+          </div>
+          <div class="feature-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Full Formatting:</strong> Change fonts, size, bold, italic, colors, and line spacing.</span>
+          </div>
+          <div class="feature-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Hindi & Unicode:</strong> हिंदी और सभी यूनिकोड भाषाओं का बेहतरीन सपोर्ट।</span>
+          </div>
+          <div class="feature-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span><strong>Tools Suite:</strong> Digital Signature, Add Images, Shapes, Merge & Split PDF, OCR.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rendered PDF Pages Container -->
+      <div class="pdf-pages-container" id="pdfPagesContainer" style="display: none;"></div>
+    </div>
+  </main>
+
+  <!-- Floating Formatting Toolbar for Text Editing -->
+  <div class="floating-text-toolbar" id="floatingTextToolbar" style="display: none;">
+    <!-- Font Family Selector -->
+    <select id="floatFontFamily" title="Font Family">
+      <option value="Helvetica, Arial, sans-serif">Helvetica / Arial (Sans)</option>
+      <option value="'Times New Roman', Times, serif">Times New Roman (Serif)</option>
+      <option value="'Courier New', Courier, monospace">Courier (Monospace)</option>
+      <option value="Georgia, serif">Georgia</option>
+      <option value="'Noto Sans Devanagari', Arial, sans-serif">Hindi / Devanagari</option>
+    </select>
+
+    <!-- Font Size with Increment / Decrement -->
+    <button class="btn btn-icon btn-ghost" id="floatBtnSizeDec" title="Decrease Font Size">-</button>
+    <input type="number" id="floatFontSize" value="12" min="6" max="144" style="width: 44px; text-align: center;">
+    <button class="btn btn-icon btn-ghost" id="floatBtnSizeInc" title="Increase Font Size">+</button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Bold, Italic -->
+    <button class="btn btn-icon btn-ghost" id="floatBtnBold" title="Bold"><strong>B</strong></button>
+    <button class="btn btn-icon btn-ghost" id="floatBtnItalic" title="Italic"><em>I</em></button>
+
+    <!-- Text Color Picker -->
+    <input type="color" id="floatTextColor" value="#000000" title="Text Color">
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Text Alignment -->
+    <button class="btn btn-icon btn-ghost" id="floatBtnAlignLeft" title="Align Left">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+    </button>
+    <button class="btn btn-icon btn-ghost" id="floatBtnAlignCenter" title="Align Center">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="10" x2="6" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="18" y1="18" x2="6" y2="18"/></svg>
+    </button>
+    <button class="btn btn-icon btn-ghost" id="floatBtnAlignRight" title="Align Right">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="21" y1="10" x2="7" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="7" y2="18"/></svg>
+    </button>
+
+    <div class="toolbar-divider"></div>
+
+    <!-- Delete and Done Buttons -->
+    <button class="btn btn-icon btn-ghost" id="floatBtnDelete" title="Delete Text Block" style="color: var(--danger);">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>
+    </button>
+    <button class="btn btn-sm btn-primary" id="floatBtnDone" title="Confirm Changes">Done</button>
+  </div>
+
+  <!-- Search & Replace Floating Bar -->
+  <div class="search-replace-bar" id="searchReplaceBar" style="display: none;">
+    <div class="search-input-row">
+      <input type="text" id="inputSearchText" placeholder="Search text in document...">
+      <span class="search-match-badge" id="searchMatchCount">0/0</span>
+      <button class="btn btn-icon btn-ghost" id="btnSearchPrev" title="Previous Match">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+      <button class="btn btn-icon btn-ghost" id="btnSearchNext" title="Next Match">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <button class="btn btn-icon btn-ghost" id="btnCloseSearch" title="Close Search">✕</button>
+    </div>
+    <div class="search-input-row">
+      <input type="text" id="inputReplaceText" placeholder="Replace with...">
+      <button class="btn" id="btnReplaceCurrent" style="font-size: 0.75rem; padding: 4px 8px;">Replace</button>
+      <button class="btn btn-primary" id="btnReplaceAll" style="font-size: 0.75rem; padding: 4px 8px;">All</button>
+    </div>
+  </div>
+
+  <!-- Digital Signature Modal -->
+  <div class="modal-overlay" id="modalSignature">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Create Digital Signature</h3>
+        <button class="btn btn-icon btn-ghost" id="btnCloseSigModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="sidebar-tabs" style="margin-bottom: 0.5rem;">
+          <div class="sidebar-tab active" id="tabSigDraw">Draw Signature</div>
+          <div class="sidebar-tab" id="tabSigType">Type Signature</div>
+          <div class="sidebar-tab" id="tabSigUpload">Upload Image</div>
+        </div>
+
+        <!-- Draw Mode Canvas -->
+        <div id="sigDrawSection">
+          <div class="signature-canvas-wrapper">
+            <canvas class="signature-canvas" id="signatureCanvas"></canvas>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.75rem; color: var(--text-secondary);">Ink Color:</span>
+              <input type="color" id="sigColorPicker" value="#000000" style="width: 24px; height: 24px; border:none; border-radius: 4px;">
+            </div>
+            <button class="btn btn-ghost" id="btnClearSignature" style="font-size: 0.8rem;">Clear Pad</button>
+          </div>
+        </div>
+
+        <!-- Type Mode -->
+        <div id="sigTypeSection" style="display: none; flex-direction: column; gap: 0.75rem;">
+          <input type="text" id="inputSigText" placeholder="Type your full name here..." style="padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-size: 1rem;">
+          <div style="border: 2px dashed var(--border-color); padding: 1.5rem; text-align: center; border-radius: var(--radius-md); background: #ffffff;">
+            <span id="previewTypedSig" style="font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #1e3a8a;">Your Signature</span>
+          </div>
+        </div>
+
+        <!-- Upload Mode -->
+        <div id="sigUploadSection" style="display: none; flex-direction: column; gap: 0.75rem;">
+          <input type="file" id="inputSigFile" accept="image/png, image/jpeg, image/webp">
+          <div id="previewSigUpload" style="max-height: 140px; display: flex; align-items: center; justify-content: center; background: #ffffff; border: 1px dashed var(--border-color); border-radius: var(--radius-md); padding: 0.5rem;">
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Select PNG/JPG signature with transparent or clean background</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnCancelSignature">Cancel</button>
+        <button class="btn btn-primary" id="btnApplySignature">Stamp Signature onto PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Image Modal -->
+  <div class="modal-overlay" id="modalAddImage">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Insert Image or Logo</h3>
+        <button class="btn btn-icon btn-ghost" id="btnCloseImageModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="file" id="inputAddImageFile" accept="image/*">
+        <div id="previewImageWrapper" style="display: none; justify-content: center; align-items: center; max-height: 220px; overflow: hidden; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 0.5rem;">
+          <img id="previewImageTag" src="" alt="Preview" style="max-width: 100%; max-height: 200px; object-fit: contain;">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnCancelImage">Cancel</button>
+        <button class="btn btn-primary" id="btnInsertImage" disabled>Insert Image</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Merge PDFs Modal -->
+  <div class="modal-overlay" id="modalMerge">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Merge Multiple PDFs</h3>
+        <button class="btn btn-icon btn-ghost" id="btnCloseMergeModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">Select additional PDF files to append to this document:</p>
+        <input type="file" id="inputMergeFiles" accept="application/pdf" multiple>
+        <div id="mergeFilesList" style="display: flex; flex-direction: column; gap: 0.4rem; max-height: 180px; overflow-y: auto;"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnCancelMerge">Cancel</button>
+        <button class="btn btn-primary" id="btnExecuteMerge" disabled>Merge & Reload</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Split PDF Modal -->
+  <div class="modal-overlay" id="modalSplit">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Split / Extract Pages</h3>
+        <button class="btn btn-icon btn-ghost" id="btnCloseSplitModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <label style="font-size: 0.85rem; font-weight: 600;">Specify Page Numbers or Ranges:</label>
+        <input type="text" id="inputSplitRange" placeholder="e.g. 1-2, 4, 6-8" style="padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+        <p style="font-size: 0.75rem; color: var(--text-muted);">Enter comma separated numbers or ranges (e.g. 1-3, 5). Selected pages will be saved as an independent new PDF.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnCancelSplit">Cancel</button>
+        <button class="btn btn-primary" id="btnExecuteSplit">Split & Download</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OCR Scanner Modal -->
+  <div class="modal-overlay" id="modalOCR">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">OCR Text Scanner (Scanned PDF)</h3>
+        <button class="btn btn-icon btn-ghost" id="btnCloseOCRModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary);">यह टूल स्कैन की गई इमेज या फ्लैट पेजों से टेक्स्ट को पहचानकर सीधे एडिटेबल लेयर में बदल देता है।</p>
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <label style="font-size: 0.85rem; font-weight: 600;">Target Page:</label>
+          <select id="selectOCRPage" style="padding: 0.35rem; border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);"></select>
+          <label style="font-size: 0.85rem; font-weight: 600;">Language:</label>
+          <select id="selectOCRLang" style="padding: 0.35rem; border-radius: var(--radius-sm); background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color);">
+            <option value="eng">English</option>
+            <option value="hin">Hindi (हिंदी)</option>
+          </select>
+        </div>
+        <div id="ocrProgressWrapper" style="display: none; flex-direction: column; gap: 0.5rem;">
+          <div style="height: 8px; width: 100%; background: var(--bg-tertiary); border-radius: 4px; overflow: hidden;">
+            <div id="ocrProgressBar" style="height: 100%; width: 0%; background: var(--accent); transition: width 0.2s ease;"></div>
+          </div>
+          <span id="ocrStatusText" style="font-size: 0.75rem; color: var(--text-secondary); text-align: center;">Processing OCR...</span>
+        </div>
+        <textarea id="ocrResultText" placeholder="Extracted OCR text will appear here..." rows="6" style="width: 100%; padding: 0.5rem; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary); font-family: monospace; font-size: 0.85rem;"></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" id="btnCancelOCR">Cancel</button>
+        <button class="btn" id="btnStartOCR">Start Recognition</button>
+        <button class="btn btn-primary" id="btnApplyOCRText" disabled>Apply as Editable Text</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Original vs Edited Modal -->
+  <div class="modal-overlay" id="modalCompare">
+    <div class="modal-card" style="max-width: 900px; width: 95%;">
+      <div class="modal-header">
+        <h3 class="modal-title">Compare Original vs. Edited Document</h3>
+        <button class="btn btn-icon btn-ghost" id="btnCloseCompareModal">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="compare-container">
+          <div class="compare-pane">
+            <div class="compare-header">Original Document</div>
+            <div class="compare-viewport" id="compareOriginalViewport">
+              <canvas id="compareOriginalCanvas"></canvas>
+            </div>
+          </div>
+          <div class="compare-pane">
+            <div class="compare-header">Current Edited Document</div>
+            <div class="compare-viewport" id="compareEditedViewport">
+              <canvas id="compareEditedCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btnExitCompare">Close Comparison</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-bar">
+    <button class="tool-btn" id="mbBtnPages" title="Pages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      <span>Pages</span>
+    </button>
+    <button class="tool-btn active" id="mbBtnSelect" data-tool="select" title="Select">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3l7 18 3-7 7-3L3 3z"/></svg>
+      <span>Select</span>
+    </button>
+    <button class="tool-btn" id="mbBtnEditText" data-tool="editText" title="Edit Text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      <span>Edit</span>
+    </button>
+    <button class="tool-btn" id="mbBtnAddText" data-tool="addText" title="Add Text">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+      <span>Add</span>
+    </button>
+    <button class="tool-btn" id="mbBtnSign" title="Sign">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg>
+      <span>Sign</span>
+    </button>
+    <button class="tool-btn" id="mbBtnSave" style="color: var(--accent);" title="Download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Save</span>
+    </button>
+  </nav>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Application Modules -->
+  <script src="js/pdf-engine.js"></script>
+  <script src="js/annotations.js"></script>
+  <script src="js/page-manager.js"></script>
+  <script src="js/ocr-engine.js"></script>
+  <script src="js/compare.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
