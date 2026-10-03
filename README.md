@@ -1,1 +1,1 @@
-# PDF Master Pro — By Mr Nazish Alfanso
+PDF Master Pro By Mr Nazish Alfanso
